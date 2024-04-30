@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using TAG.Order.Entities;
 using TAG.Order.Repositoryy.Interface;
@@ -18,21 +19,43 @@ namespace TAG.Order.Api.Controllers
 
         // GET: api/<OrderController>
         [HttpGet("GetAllOrder")]
-        public async Task<IEnumerable<OrderDetails>> GetAllOrder()
+        public async Task<IActionResult> GetAllOrder()
         {
-            return await _repository.GetAll();
+            var result = await _repository.GetAll();
+            if (result.Count > 0)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         [HttpGet("GetByID/{id}")]
-        public async Task<OrderDetails> GetOrder(int id)
+        public async Task<IActionResult> GetOrder(int id)
         {
-            return await _repository.GetById(id);
+            var result = await _repository.GetById(id);
+            if (result != null)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
         [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] OrderDetails orderDetails)
         {
+            if (orderDetails is null)
+            {
+                return BadRequest();
+                
+            }
             await _repository.Add(orderDetails);
             return Ok();
+
         }
         [HttpPut("Update/{id}")]
         public async Task<IActionResult> Update([FromBody] OrderDetails orderDetails, int id)
