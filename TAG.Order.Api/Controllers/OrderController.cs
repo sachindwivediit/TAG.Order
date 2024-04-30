@@ -16,25 +16,25 @@ namespace TAG.Order.Api.Controllers
             _repository = repository;
         }
 
-          // GET: api/<OrderController>
-        [HttpGet]
+        // GET: api/<OrderController>
+        [HttpGet("GetAllOrder")]
         public async Task<IEnumerable<OrderDetails>> GetAllOrder()
         {
             return await _repository.GetAll();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("GetByID/{id}")]
         public async Task<OrderDetails> GetOrder(int id)
         {
             return await _repository.GetById(id);
         }
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task<IActionResult> Create([FromBody] OrderDetails orderDetails)
         {
             await _repository.Add(orderDetails);
             return Ok();
         }
-        [HttpPut("{id}")]
+        [HttpPut("Update/{id}")]
         public async Task<IActionResult> Update([FromBody] OrderDetails orderDetails, int id)
         {
             if (id > 0)
@@ -42,10 +42,10 @@ namespace TAG.Order.Api.Controllers
                 var resultOrder = await _repository.GetById(id);
                 if (resultOrder != null)
                 {
-                    orderDetails.OrderNumber = orderDetails.OrderNumber;
-                    orderDetails.ProductName = orderDetails.ProductName;
-                    orderDetails.CreatedBy = orderDetails.CreatedBy;
-                    orderDetails.CreatedDate = DateTime.Now;
+                    resultOrder.OrderNumber = orderDetails.OrderNumber;
+                    resultOrder.ProductName = orderDetails.ProductName;
+                    resultOrder.CreatedBy = orderDetails.CreatedBy;
+                    resultOrder.CreatedDate = DateTime.Now;
 
                     await _repository.Update(resultOrder);
                     return Ok();
@@ -62,7 +62,7 @@ namespace TAG.Order.Api.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> Delete(OrderDetails orderDetails, int id)
         {
             if (id > 0)
