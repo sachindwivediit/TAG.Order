@@ -1,4 +1,10 @@
 
+using Microsoft.EntityFrameworkCore;
+using TAG.Order.Repository.Implementation;
+using TAG.Order.Repository;
+using TAG.Order.Repositoryy.Interface;
+using TAG.Order.Entities;
+
 namespace TAG.Order.Api
 {
     public class Program
@@ -8,6 +14,13 @@ namespace TAG.Order.Api
             var builder = WebApplication.CreateBuilder(args);
 
             // Add services to the container.
+            //Add ApplicationDbContext
+            builder.Services.AddDbContext<ApplicationDbContext>(
+                options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), b => b.MigrationsAssembly("TAG.Order.Api")));
+
+            //Add Generic repo
+            builder.Services.AddScoped(typeof(IRepository<OrderDetails>), typeof(GenericRepository));
+
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
